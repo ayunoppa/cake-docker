@@ -1,0 +1,90 @@
+services:
+  web:
+    build:
+      context: ./docker/nginx
+      dockerfile: Dockerfile
+    container_name: cake_web
+    ports:
+      - "8080:80"
+      - "8443:443"
+    volumes:
+      - ./src:/var/www/html:delegated
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - app
+    networks:
+      - cake_net
+
+  app:
+    build:
+      context: ./docker/php
+      dockerfile: Dockerfile
+    container_name: cake_app
+    working_dir: /var/www/html
+    volumes:
+      - ./src:/var/www/html:delegated
+      - ./docker/php/php.ini:/usr/local/etc/php/conf.d/99-custom.ini:ro
+    environment:
+      TZ: Asia/Tokyo
+    depends_on:
+      - db
+      - redis
+      - mailpit
+    networks:
+      - cake_net
+
+  db:
+    image: mysql:8.4
+    container_name: cake_db
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: cake
+      MYSQL_USER: cake
+      MYSQL_PASSWORD: cake
+      MYSQL_ROOT_PASSWORD: root
+      TZ: Asia/Tokyo
+    volumes:
+      - ./docker/db/data:/var/lib/mysql
+    command: >
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_0900_ai_ci
+    networks:
+      - cake_net
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: cake_phpmyadmin
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: root
+      PMA_ARBITRARY: 1
+      UPLOAD_LIMIT: 64M
+    depends_on:
+      - db
+    networks:
+      - cake_net
+      
+  redis:
+    image: redis:7-alpine
+    container_name: cake_redis
+    ports:
+      - "6379:6379"
+    networks:
+      - cake_net
+
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: cake_mailpit
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+    networks:
+      - cake_net
+
+networks:
+  cake_net:
