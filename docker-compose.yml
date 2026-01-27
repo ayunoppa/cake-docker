@@ -46,6 +46,7 @@ services:
       TZ: Asia/Tokyo
     volumes:
       - ./docker/db/data:/var/lib/mysql
+      - ./docker/db/init:/docker-entrypoint-initdb.d:ro
     command: >
       --character-set-server=utf8mb4
       --collation-server=utf8mb4_0900_ai_ci
@@ -88,3 +89,4 @@ services:
 
 networks:
   cake_net:
+    driver: bridge
