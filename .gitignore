@@ -3,5 +3,5 @@
 !/docker/db/data/.gitkeep
 
 # Laravelのソースコード
-/src/*
-!/src/.gitkeep
+/cake/*
+!/cake/.gitkeep

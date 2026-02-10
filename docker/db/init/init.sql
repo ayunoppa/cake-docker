@@ -7,4 +7,11 @@ GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, REFERENCES
 CREATE USER IF NOT EXISTS 'readonly'@'%' IDENTIFIED BY 'readonly';
 GRANT SELECT ON `cake`.* TO 'readonly'@'%';
 
+-- cake_test データベースの作成
+CREATE DATABASE IF NOT EXISTS cake_test;
+
+-- test ユーザーの作成と権限付与
+CREATE USER 'test'@'%' IDENTIFIED BY 'test';
+GRANT ALL PRIVILEGES ON cake_test.* TO 'test'@'%';
+
 FLUSH PRIVILEGES;
