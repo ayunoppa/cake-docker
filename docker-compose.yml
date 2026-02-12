@@ -26,6 +26,7 @@ services:
       - ./docker/php/php.ini:/usr/local/etc/php/conf.d/99-custom.ini:ro
     environment:
       TZ: Asia/Tokyo
+      APP_FULL_BASE_URL: "https://localhost:8443"
     depends_on:
       - db
       - redis
